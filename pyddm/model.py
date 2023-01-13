@@ -256,7 +256,9 @@ class Model(object):
         params = []
         param_names = []
         for dep in self.dependencies:
-            dep_name = dep.depname.lower() if dep_name != "IC" else "IC"
+            dep_name = dep.depname.lower()
+            if dep_name == "ic":
+                dep_name = "IC"
             for param_name in dep.required_parameters:
                 param_value = getattr(dep, param_name)
                 if unique:
