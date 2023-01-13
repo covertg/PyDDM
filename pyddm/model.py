@@ -209,7 +209,7 @@ class Model(object):
                         params.append(param_value)
         return params
 
-    def get_model_parameter_names(self):
+    def get_model_parameter_names(self, unique=False):
         """Get an ordered list of the names of all parameters in the model.
 
         Returns the name of each model parameter.  The ordering is
@@ -222,8 +222,11 @@ class Model(object):
         params = []
         param_names = []
         for dep in self.dependencies:
+            dep_name = dep.depname.lower() if dep_name != "IC" else "IC"
             for param_name in dep.required_parameters:
                 param_value = getattr(dep, param_name)
+                if unique:
+                    param_name = dep_name + "." + param_name
                 # If this can be fit to data
                 if isinstance(param_value, Fittable):
                     # If we have the same Fittable object in two
