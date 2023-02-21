@@ -398,7 +398,7 @@ class Model(object):
         # Convenience functions
         _driftdep = self.get_dependence("drift")
         _noisedep = self.get_dependence("noise")
-        fm = lambda x,t : _driftdep.get_drift(t=t, x=x, conditions=conditions)
+        fm = lambda x,t : _driftdep.get_drift_safe(t=t, x=x, conditions=conditions)
         fs = lambda x,t : _noisedep.get_noise(t=t, x=x, conditions=conditions)
         
         for i in range(1, len(T)):
@@ -577,13 +577,13 @@ class Model(object):
         
         # The analytic_ddm function does the heavy lifting.
         if isinstance(self.get_dependence('bound'), BoundCollapsingLinear): # Linearly Collapsing Bound
-            anal_pdf_choice_upper, anal_pdf_choice_lower = analytic_ddm(self.get_dependence("drift").get_drift(t=0, x=0, conditions=conditions),
+            anal_pdf_choice_upper, anal_pdf_choice_lower = analytic_ddm(self.get_dependence("drift").get_drift_safe(t=0, x=0, conditions=conditions),
                                                        self.get_dependence("noise").get_noise(t=0, x=0, conditions=conditions),
                                                        self.get_dependence("bound").get_bound(t=0, x=0, conditions=conditions),
                                                        self.t_domain(), shift, -self.get_dependence("bound").t,
                                                        force_python=force_python) # TODO why must this be negative? -MS
         else: # Constant bound DDM
-            anal_pdf_choice_upper, anal_pdf_choice_lower = analytic_ddm(self.get_dependence("drift").get_drift(t=0, x=0, conditions=conditions),
+            anal_pdf_choice_upper, anal_pdf_choice_lower = analytic_ddm(self.get_dependence("drift").get_drift_safe(t=0, x=0, conditions=conditions),
                                                         self.get_dependence("noise").get_noise(t=0, x=0, conditions=conditions),
                                                        self.get_dependence("bound").get_bound(t=0, x=0, conditions=conditions), 
                                                        self.t_domain(), shift,
@@ -622,18 +622,19 @@ class Model(object):
         currently undocumented feature).
         """
 
-        get_drift = self.get_dependence("drift").get_drift
+        get_drift_safe = self.get_dependence("drift").get_drift_safe
         drift_uses_t = self.get_dependence("drift")._uses_t()
         drift_uses_x = self.get_dependence("drift")._uses_x()
+        t_domain = self.t_domain()
         if not drift_uses_t and not drift_uses_x:
             drifttype = 0
-            drift = np.asarray([get_drift(conditions=conditions, x=0, t=0)])
+            drift = np.asarray([get_drift_safe(conditions=conditions, x=0, t=0)])
         elif drift_uses_t and not drift_uses_x:
             drifttype = 1
-            drift = np.asarray([get_drift(t=t, conditions=conditions, x=0) for t in self.t_domain()])
+            drift = np.asarray([get_drift_safe(t=t, conditions=conditions, x=0) for t in t_domain])
         elif not drift_uses_t and drift_uses_x:
             drifttype = 2
-            drift = np.asarray(get_drift(x=self.x_domain(conditions=conditions), t=0, conditions=conditions))
+            drift = np.asarray(get_drift_safe(x=self.x_domain(conditions=conditions), t=0, conditions=conditions))
         elif drift_uses_t and drift_uses_x:
             drifttype = 3
             # TODO: Right now this calculates and passes the maximum x domain,
@@ -645,9 +646,9 @@ class Model(object):
             # rectangular matrix, since they will never be read within the C
             # code.  maxt is a workaround so we don't have to find the maximum
             # in the t domain on each iteration.
-            maxt = self.t_domain()[np.argmax([self.get_dependence("bound").get_bound(t=t, conditions=conditions) for t in self.t_domain()])]
+            maxt = t_domain[np.argmax([self.get_dependence("bound").get_bound(t=t, conditions=conditions) for t in t_domain])]
             xdomain = self.x_domain(t=maxt, conditions=conditions)
-            drift = np.concatenate([get_drift(t=t, x=xdomain, conditions=conditions) for t in self.t_domain()])
+            drift = np.concatenate([get_drift_safe(t=t, x=xdomain, conditions=conditions) for t in t_domain])
         get_noise = self.get_dependence("noise").get_noise
         noise_uses_t = self.get_dependence("noise")._uses_t()
         noise_uses_x = self.get_dependence("noise")._uses_x()
@@ -656,24 +657,25 @@ class Model(object):
             noise = np.asarray([get_noise(conditions=conditions, x=0, t=0)])
         elif noise_uses_t and not noise_uses_x:
             noisetype = 1
-            noise = np.asarray([get_noise(t=t, conditions=conditions, x=0) for t in self.t_domain()])
+            noise = np.asarray([get_noise(t=t, conditions=conditions, x=0) for t in t_domain])
         elif not noise_uses_t and noise_uses_x:
             noisetype = 2
             noise = np.asarray(get_noise(x=self.x_domain(conditions=conditions), conditions=conditions, t=0))
         elif noise_uses_t and noise_uses_x:
             noisetype = 3
             # See comment in drifttype = 3
-            maxt = self.t_domain()[np.argmax([self.get_dependence("bound").get_bound(t=t, conditions=conditions) for t in self.t_domain()])]
+            maxt = t_domain[np.argmax([self.get_dependence("bound").get_bound(t=t, conditions=conditions) for t in t_domain])]
             xdomain = self.x_domain(t=maxt, conditions=conditions)
-            noise = np.concatenate([get_noise(t=t, x=xdomain, conditions=conditions) for t in self.t_domain()])
+            noise = np.concatenate([get_noise(t=t, x=xdomain, conditions=conditions) for t in t_domain])
         bound_uses_t = self.get_dependence("bound")._uses_t()
         if not bound_uses_t:
             boundtype = 0
             bound = np.asarray([self.get_dependence("Bound").get_bound(conditions=conditions, t=0)])
         elif bound_uses_t:
             boundtype = 1
-            bound = np.asarray([self.get_dependence("Bound").get_bound(t=t, conditions=conditions) for t in self.t_domain()])
-        res = csolve.implicit_time(drift, drifttype, noise, noisetype, bound, boundtype, self.get_dependence("IC").get_IC(self.x_domain(conditions=conditions), self.dx, conditions=conditions), self.T_dur, self.dt, self.dx, len(self.t_domain()))
+            bound = np.asarray([self.get_dependence("Bound").get_bound(t=t, conditions=conditions) for t in t_domain])
+        ic =  self.IC(conditions=conditions)
+        res = csolve.implicit_time(drift, drifttype, noise, noisetype, bound, boundtype, ic, self.T_dur, self.dt, self.dx, len(t_domain))
         # TODO: Handle the pdf going below zero, returning pdfcurr, and fix numerical errors
         choice_upper = (res[0]*self.dt)
         choice_upper[choice_upper<0] = 0

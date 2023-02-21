@@ -7,3 +7,5 @@
 .cache
 *.pdf
 test0420.py
+*.egg-info/
+csolve*.so

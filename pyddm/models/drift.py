@@ -10,8 +10,11 @@ import numpy as np
 from ..tridiag import TriDiagMatrix
 
 from .base import Dependence
+from .exception import EXCEPTIONS_TO_CONVERT, DependenceValueError
+from ..logger import logger as _logger
 from paranoid import *
 from .paranoid_types import Conditions
+
 
 @paranoidclass
 class Drift(Dependence):
@@ -43,7 +46,7 @@ class Drift(Dependence):
         There is generally no need to redefine this method in
         subclasses.
         """
-        drift = self.get_drift(x=x, t=t, dx=dx, dt=dt, conditions=conditions, **kwargs)
+        drift = self.get_drift_safe(x=x, t=t, dx=dx, dt=dt, conditions=conditions, **kwargs)
         D = np.zeros(len(x))
         if np.isscalar(drift):
             UP = 0.5*dt/dx * drift * np.ones(len(x)-1)
@@ -72,7 +75,15 @@ class Drift(Dependence):
         There is generally no need to redefine this method in
         subclasses.
         """
-        return 0.5*dt/dx * np.sign(x_bound) * self.get_drift(x=x_bound, t=t, dx=dx, dt=dt, conditions=conditions, **kwargs)
+        return 0.5*dt/dx * np.sign(x_bound) * self.get_drift_safe(x=x_bound, t=t, dx=dx, dt=dt, conditions=conditions, **kwargs)
+    def get_drift_safe(self, *args, **kwargs):
+        try:
+            drift = self.get_drift(*args, **kwargs)
+        except EXCEPTIONS_TO_CONVERT as e:
+            raise DependenceValueError("%s raised an exception in get_drift()" % type(self).__name__) from e
+        if np.any(np.isinf(drift)) or np.any(np.isnan(drift)):
+            raise DependenceValueError("Drift dependence output is out of bounds")
+        return drift
     def get_drift(self, t, x, conditions, **kwargs):
         """Calculate the instantaneous drift rate.
 

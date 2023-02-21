@@ -1,10 +1,10 @@
-import unittest
-from unittest import TestCase, main
-from string import ascii_letters
+from unittest import TestCase
 import numpy as np
+import inspect
 from itertools import groupby
 from math import fsum
 import pandas
+import pytest
 import copy
 import scipy.stats
 
@@ -837,6 +837,35 @@ class TestCSolver(TestCase):
             assert np.all(np.isclose(s1.pdf("_bottom"), s2.pdf("_bottom"), atol=1e-3, rtol=1e-3)), "Testing model id " + str(i)
 
 
+@pytest.mark.parametrize("method,force_python", [
+    ("analytical", True),
+    ("analytical", False),
+    ("numerical_implicit", True),
+    ("numerical_implicit", False),
+    ("numerical_cn", None)
+])
+class TestDependenceRobustness():
+    def setup_class(self):
+        self.paranoid_enabled = paranoid.settings.Settings.get("enabled")
+        paranoid.settings.Settings.set(enabled=False)
+ 
+    def teardown_class(self):
+        paranoid.settings.Settings.set(enabled=self.paranoid_enabled)
+
+    @pytest.mark.parametrize("modelkwargs,params", [
+        (dict(drift=ddm.DriftConstant(drift=ddm.Fittable())), (np.inf,)),
+        (dict(drift=ddm.DriftConstant(drift=ddm.Fittable())), (-np.inf,)),
+        (dict(drift=ddm.DriftConstant(drift=ddm.Fittable())), (np.nan,))
+    ])
+    def test_solve_bad_params(self, modelkwargs, params, method, force_python):
+        m = ddm.Model(**modelkwargs)
+        m.set_model_parameters(params)
+        solve_fn = getattr(m, "solve_" + method)
+        with pytest.raises(ddm.models.exception.DependenceValueError):
+            if force_python is not None:
+                solve_fn(force_python=force_python)
+            else:
+                solve_fn()
 
 # TODO test if there is no overlay, then corr + err + undecided = 1
 # TODO test bounds that don't depend on t but do depend on conditions, mus like that, etc.
