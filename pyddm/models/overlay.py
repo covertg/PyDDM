@@ -222,7 +222,7 @@ class OverlayExponentialMixture(Overlay):
     """An exponential mixture distribution.
 
     The output distribution should be pmixturecoef*100 percent exponential
-    distribution and (1-umixturecoef)*100 percent of the distribution
+    distribution and (1-pmixturecoef)*100 percent of the distribution
     to which this overlay is applied.
 
     A mixture with the exponential distribution can be used to confer

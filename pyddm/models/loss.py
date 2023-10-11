@@ -59,7 +59,7 @@ class LossFunction(object):
         """Initialize the loss function.
 
         The optional `setup` function is executed at the end of the
-        initializaiton.  It is executed only once at the beginning of
+        initializaton.  It is executed only once at the beginning of
         the fitting procedure.
 
         This function may optionally be redefined in subclasses.

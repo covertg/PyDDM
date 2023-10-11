@@ -40,7 +40,7 @@ Different non-decision time for left and right trials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here we show an example of a non-decision time which depends on both the trial
-conditions and mulitiple parameters.  In this case, we use a different
+conditions and multiple parameters.  In this case, we use a different
 non-decision time based on whether a stimulus was presented on the left or right
 side of the subject.
 

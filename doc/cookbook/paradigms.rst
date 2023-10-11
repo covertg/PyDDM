@@ -49,7 +49,7 @@ Try it out with::
 
 Alternatively, drift can be set at a default value independent of
 coherence, and changed during the pulse duration.  In this case, there
-is some fixed amount of evidence, with a small burst of additionall
+is some fixed amount of evidence, with a small burst of additional
 evidence:
 
 .. literalinclude:: ../downloads/cookbook.py

@@ -84,7 +84,7 @@ default).  Instead, I want my initial conditions to be:
 
   - :class:`A uniform distribution of arbitrary length centered in the middle of the bounds <.ICRange>`
 
-  - :ref:`A uniform distribution of arbitrary length with a center at an arbitrary location wtih sign determined by task conditions <ic-biased-range>`
+  - :ref:`A uniform distribution of arbitrary length with a center at an arbitrary location with sign determined by task conditions <ic-biased-range>`
 
 - :class:`A Gaussian distribution centered in the middle of the bounds <.ICGaussian>`
 

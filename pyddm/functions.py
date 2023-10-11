@@ -75,7 +75,7 @@ def get_model_loss(model, sample, lossfunction=LossLikelihood, method=None):
 
     A shortcut method to compute the loss (under loss function
     `lossfunction`) of Model `model` with respect to Sample `sample`.
-    Optionaly, specificy the numerical method `method` to use
+    Optionally, specify the numerical method `method` to use
     (e.g. analytical, numerical, implicit, etc.)
     
     Note that this should not be used when performing model fits, as

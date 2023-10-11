@@ -56,7 +56,7 @@ class Bound(Dependence):
 
 @paranoidclass
 class BoundConstant(Bound):
-    """Bound dependence: bound is constant throuhgout the simulation.
+    """Bound dependence: bound is constant throughout the simulation.
 
     Takes only one parameter: `B`, the constant bound.
 

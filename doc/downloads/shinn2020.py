@@ -286,7 +286,7 @@ class OverlayExponentialRewardMixture(ddm.Overlay):
     Poisson process, i.e. modeling a uniform lapse rate and hence has
     a flat hazard function.
 
-    `ratehr` is the reate for the high reward choice, and `ratelr` is
+    `ratehr` is the rate for the high reward choice, and `ratelr` is
     for the low reward choice.
 
     Example usage:

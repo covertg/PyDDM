@@ -152,7 +152,7 @@ class Sample(object):
                 return False
         return True
     def __add__(self, other):
-        assert sorted(self.conditions.keys()) == sorted(other.conditions.keys()), "Canot add with unlike conditions"
+        assert sorted(self.conditions.keys()) == sorted(other.conditions.keys()), "Cannot add with unlike conditions"
         assert self.choice_names == other.choice_names, "Cannot add samples with different choice names"
         choice_upper = np.concatenate([self.choice_upper, other.choice_upper])
         choice_lower = np.concatenate([self.choice_lower, other.choice_lower])

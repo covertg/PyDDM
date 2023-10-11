@@ -191,7 +191,7 @@ Your model may be slow for a number of different reasons.
   simulate one pdf per potential combination of conditions.  For
   example, if you are using 200 different coherence values, then PyDDM
   will need to simulate 200 different pdfs for each call you make to
-  :meth:`.Model.solve`.  This also compounds multiplicativly: if you
+  :meth:`.Model.solve`.  This also compounds multiplicatively: if you
   have 200 coherence conditions and 10 reward conditions, you will get
   :math:`200 \times 10=2000` pdf simulations per call to
   :meth:`.Model.solve`.  During fitting, :meth:`.Model.solve` is

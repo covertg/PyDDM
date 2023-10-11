@@ -105,7 +105,7 @@ class Model(object):
         unitary values.
 
         Additionally, simulation parameters can be set, such as time
-        and spacial precision (`dt` and `dx`) and the simulation
+        and spatial precision (`dt` and `dx`) and the simulation
         duration `T_dur`.  If not specified, they will be taken from
         the defaults specified in the parameters file.
 
@@ -475,7 +475,7 @@ class Model(object):
 
         Note that in practice you should never need to use this
         function.  This function uses an outdated method to simulate
-        the model and should be used for comparison perposes only.  To
+        the model and should be used for comparison purposes only.  To
         produce a probability density function of boundary crosses,
         use Model.solve().  To sample from the probability
         distribution (e.g. for finding confidence intervals for
@@ -602,7 +602,7 @@ class Model(object):
         if isinstance(self.get_dependence('IC'),ICPoint):
             ic = self.IC(conditions=conditions)
             assert np.count_nonzero(ic)==1, "Cannot solve analytically for models with non-point initial conditions"
-            shift = np.flatnonzero(ic) / (len(ic) - 1) #rescale to proprotion of total bound height
+            shift = np.flatnonzero(ic) / (len(ic) - 1) #rescale to proportion of total bound height
         else:
             shift = None
         
@@ -634,7 +634,7 @@ class Model(object):
             if pdfsum > 1.01 and param.renorm_warnings:
                 _logger.warning(("Renormalizing probability density from " + str(pdfsum) + " to 1."
                     + "  Try decreasing dt.  If that doesn't eliminate this warning, it may be due"
-                    + " to extreme parameter values and/or bugs in your model spefication."))
+                    + " to extreme parameter values and/or bugs in your model specification."))
                 _logger.debug(self.parameters())
             anal_pdf_choice_upper /= pdfsum
             anal_pdf_choice_lower /= pdfsum
@@ -962,7 +962,7 @@ class Model(object):
         pdf_inner = self.IC(conditions=conditions)
         # pdf_prev = np.zeros((len(pdf_curr)))
         # If pdf_corr + pdf_err + undecided probability are summed, they
-        # equal 1.  So these are componets of the joint pdf.
+        # equal 1.  So these are components of the joint pdf.
         pdf_choice_upper = np.zeros(len(self.t_domain())+1) # Not a proper pdf on its own (doesn't sum to 1)
         pdf_choice_lower = np.zeros(len(self.t_domain())+1) # Not a proper pdf on its own (doesn't sum to 1)
         x_list = self.x_domain(conditions=conditions)
@@ -1179,7 +1179,7 @@ class Model(object):
             if pdfsum > 1.01 and param.renorm_warnings:
                 _logger.warning(("Renormalizing probability density from " + str(pdfsum) + " to 1."
                     + "  Try decreasing dt.  If that doesn't eliminate this warning, it may be due"
-                    + " to extreme parameter values and/or bugs in your model spefication."))
+                    + " to extreme parameter values and/or bugs in your model specification."))
                 _logger.debug(self.parameters())
             pdf_choice_upper /= pdfsum
             pdf_choice_lower /= pdfsum

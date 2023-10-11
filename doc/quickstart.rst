@@ -481,7 +481,7 @@ To fit a model to data:
    use for it.  These model component can either be :doc:`the model
    components included in PyDDM <apidoc/dependences>` or ones you created in
    step 1.  Parameters for the model components must either be
-   specified expicitly or else set to a :class:`.Fittable` instance,
+   specified explicitly or else set to a :class:`.Fittable` instance,
    for example "Fittable(minval=0, maxval=1)".
 3. Run :func:`.fit_adjust_model` on the model and the sample.  Optionally
    specify a :class:`loss function <.LossFunction>` other than the default

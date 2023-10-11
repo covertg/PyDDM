@@ -49,7 +49,7 @@ M = M[M[:,0]<1.65,:]
 conditions = ["coh", "monkey", "trgchoice"]
 roitman_sample2 = Sample.from_numpy_array(M, conditions)
 
-# As we can see, these two approches are equivalent.
+# As we can see, these two approaches are equivalent.
 assert roitman_sample == roitman_sample2
 
 

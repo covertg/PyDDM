@@ -13,7 +13,7 @@ import inspect
 class Dependence(object): # TODO Base this on ABC
     """An abstract class describing how one variable depends on other variables.
 
-    This is an abstract class which is inherrited by other abstract
+    This is an abstract class which is inherited by other abstract
     classes only, and has the highest level machinery for describing
     how one variable depends on others.  For example, an abstract
     class that inherits from Dependence might describe how the drift

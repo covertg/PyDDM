@@ -151,7 +151,7 @@ class NoiseLinear(Noise):
 
     Take three parameters:
 
-    - `noise` - The inital noise standard deviation
+    - `noise` - The initial noise standard deviation
     - `x` - The coefficient by which noise standard deviation varies with x
     - `t` - The coefficient by which noise standard deviation varies with t
 
