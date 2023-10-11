@@ -760,13 +760,14 @@ class TestMisc(TestCase):
         s = m.solve_analytical(force_python=True)
         assert len(s.pdf("_top")) == len(m.t_domain())
     def test_get_set_parameters_functions(self):
-        """Test get_parameters, set_parameters, and get_parameter_names"""
+        """Test get_parameters, set_parameters, and get_parameter_names*"""
         p1 = ddm.Fittable(minval=0, maxval=1)
         p2 = ddm.Fittable(minval=.3, maxval=.9, default=.4)
         m = ddm.Model(drift=ddm.DriftConstant(drift=p1), noise=ddm.NoiseLinear(noise=p2, x=.2, t=p1))
         print(m.get_model_parameters())
         assert all(id(a) == id(b) for a,b in zip(m.get_model_parameters(), [p1, p2]))
         assert all(a == b for a,b in zip(m.get_model_parameter_names(), ["drift/t", "noise"]))
+        assert all(a == b for a,b in zip(m.get_model_parameter_names_unique(), ["drift.drift/noise.t", "noise.noise"]))
         m.set_model_parameters(m.get_model_parameters())
         assert all(id(a) == id(b) for a,b in zip(m.get_model_parameters(), [p1, p2]))
         m.set_model_parameters([.5, .5])
