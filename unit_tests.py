@@ -830,8 +830,10 @@ class TestCSolver(TestCase):
             ddm.Model(bound=ddm.BoundCollapsingLinear(B=1.0, t=2)),
             ddm.Model(IC=ddm.ICPoint(x0=.3)),
             ddm.Model(IC=ddm.ICPoint(x0=.3), bound=ddm.BoundCollapsingLinear(B=1.0, t=2)),
+            ddm.Model(IC=ddm.ICPointRatio(x0=-0.2))
             ]
         for i,m in enumerate(models):
+            assert m.has_analytical_solution()
             s1 = m.solve_analytical(force_python=True)
             s2 = m.solve_analytical(force_python=False)
             assert np.all(np.isclose(s1.pdf("_top"), s2.pdf("_top"), atol=1e-3, rtol=1e-3)), "Testing model id " + str(i)
