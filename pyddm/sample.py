@@ -262,7 +262,7 @@ class Sample(object):
             assert correct_column_name is not None
             assert choice_names == ("correct", "error")
             choice_column_name = correct_column_name
-            deprecation_warning("the choice_column_name argument")
+            deprecation_warning(instead="the choice_column_name argument", isfunction=False)
         undecided_rows = df[rt_column_name].isna() & df[choice_column_name].isna()
         df_undecided = df[undecided_rows]
         df = df[~undecided_rows]
