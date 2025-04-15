@@ -317,7 +317,7 @@ class Model(object):
         """Get an ordered list of the names of all parameters in the model.
 
         Returns the name of each model parameter.  The ordering is
-        arbitrary, but is uaranteed to be in the same order as
+        arbitrary, but is guaranteed to be in the same order as
         get_model_parameters() and set_model_parameters(). If multiple
         parameters refer to the same "Fittable" object, then that
         object will only be listed once, however the names of the
@@ -328,6 +328,37 @@ class Model(object):
         for dep in self.dependencies:
             for param_name in dep.required_parameters:
                 param_value = getattr(dep, param_name)
+                # If this can be fit to data
+                if isinstance(param_value, Fittable):
+                    # If we have the same Fittable object in two
+                    # different components inside the model, we only
+                    # want to list it once.
+                    if id(param_value) not in map(id, params):
+                        param_names.append(param_name)
+                        params.append(param_value)
+                    else:
+                        ind = list(map(id, params)).index(id(param_value))
+                        if param_name not in param_names[ind].split("/"):
+                            param_names[ind] += "/" + param_name
+        return param_names
+    
+    def get_model_parameter_names_unique(self):
+        """List the names of model parameters, ensuring unique names.
+        
+        The output is the same as `get_model_parameter_names`, except each
+        parameter name is prefixed by the dependence name and a "."
+        character. For example, a model with free parameters for
+        `DriftLinear` will output `['drift.drift', 'drift.x', 'drift.t']`.
+        """
+        params = []
+        param_names = []
+        for dep in self.dependencies:
+            dep_name = dep.depname.lower()
+            if dep_name == "ic":
+                dep_name = "IC"  #  readability
+            for param_name in dep.required_parameters:
+                param_value = getattr(dep, param_name)
+                param_name = dep_name + "." + param_name
                 # If this can be fit to data
                 if isinstance(param_value, Fittable):
                     # If we have the same Fittable object in two
