@@ -9,9 +9,11 @@ import logging
 import numpy as np
 from paranoid.types import NDArray, Generic, Number, Self, Positive0, Range, Natural1, Natural0, Maybe, Boolean, Or, String, Set, Constant, Numeric
 from paranoid.decorators import accepts, returns, requires, ensures, paranoidclass
+from . import parameters as param
 from .models.paranoid_types import Conditions, Choice
 from .sample import Sample
 from .logger import logger as _logger, deprecation_warning
+
 
 @paranoidclass
 class Solution(object):
@@ -350,7 +352,7 @@ class Solution(object):
     def prob_undecided(self):
         """The probability of not responding during the time limit."""
         udprob = 1 - np.sum(self.choice_upper) - np.sum(self.choice_lower)
-        if udprob < 0:
+        if udprob < 0 and param.renorm_warnings:
             _logger.warning("Setting undecided probability from %f to 0" % udprob)
             _logger.debug(self.model_parameters)
             udprob = 0
